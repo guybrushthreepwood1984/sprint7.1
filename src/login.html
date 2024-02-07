@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Login Page</title>
+    <style>
+      body {
+        margin: 0;
+        padding-bottom: 3rem;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Helvetica, Arial, sans-serif;
+      }
+
+      #loginForm {
+        background: rgba(0, 0, 0, 0.15);
+        padding: 1rem;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        box-sizing: border-box;
+        backdrop-filter: blur(10px);
+        border-radius: 5px;
+      }
+
+      #loginForm label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: white;
+      }
+
+      #loginForm input {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+      }
+
+      #loginForm button {
+        background: #333;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+      }
+
+      #loginForm button:hover {
+        background: #555;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="loginForm">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" autocomplete="off" />
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" />
+
+      <button type="submit">Login</button>
+    </div>
+  </body>
+</html>
