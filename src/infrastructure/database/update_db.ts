@@ -17,7 +17,7 @@ export async function newUser(newUserName: string, password: string) {
       password: password
     });
     await user.save();
-    console.log(`New user created: ${user}`);
+    // console.log(`New user created: ${user}`);
   } catch (e: unknown) {
     console.log(e.message);
   }

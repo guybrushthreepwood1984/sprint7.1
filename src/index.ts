@@ -1,5 +1,4 @@
-import express from 'express';
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -17,6 +16,7 @@ connectDB();
 newUser('Michi', 'password');
 
 const app = express();
+app.use(express.json());
 app.use(cors());
 const server = createServer(app);
 export const io = new Server(server, {
@@ -25,9 +25,25 @@ export const io = new Server(server, {
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-app.get('/', (req: Request, res: Response) => {
-  res.sendFile(join(__dirname, 'index.html'));
+app.get('/login', (_req: Request, res: Response) => {
+  res.sendFile(join(__dirname, 'login.html'));
 });
+
+app.get('/room', (req: Request, res: Response) => {
+  if (req) res.sendFile(join(__dirname, 'index.html'));
+});
+
+app.post('/room', (req: Request, res: Response) => {
+  const data = req.body;
+  console.log(data);
+  res.status(201);
+});
+
+// app.post('/', (req: Request, res: Response) => {
+//   res.sendFile(join(__dirname + '/index.html'));
+//   const data = req.body;
+//   res.status(201).send(data);
+// });
 
 io.on('connection', async (socket) => {
   socket.on('chat message', async (msg, clientOffset, callback) => {

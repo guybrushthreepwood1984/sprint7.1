@@ -55,7 +55,7 @@
   </head>
 
   <body>
-    <div id="loginForm">
+    <form action="http://localhost:3000/room" id="loginForm">
       <label for="username">Username:</label>
       <input type="text" id="username" name="username" autocomplete="off" />
 
@@ -63,6 +63,35 @@
       <input type="password" id="password" name="password" />
 
       <button type="submit">Login</button>
-    </div>
+    </form>
+    <script>
+      const loginForm = document.getElementById('loginForm');
+      const username = document.getElementById('username');
+      const password = document.getElementById('password');
+
+      loginForm.addEventListener('submit', (e) => {
+        // e.preventDefault();
+        const data = {
+          username: username.value,
+          password: password.value
+        };
+
+        fetch('http://localhost:3000/room', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+          .then(() => {
+            username.value = '';
+            password.value = '';
+          })
+
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+      });
+    </script>
   </body>
 </html>
