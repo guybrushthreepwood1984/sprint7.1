@@ -14,12 +14,7 @@ import {
 } from './infrastructure/database/update_db';
 
 connectDB();
-async function insertData() {
-  await newUser('Michi', 'password');
-  await addMessage('Michi', 'message1', 'offset1', 'chatroom1');
-}
-
-insertData();
+newUser('Michi', 'password');
 
 const app = express();
 app.use(cors());
@@ -37,6 +32,7 @@ app.get('/', (req: Request, res: Response) => {
 io.on('connection', async (socket) => {
   socket.on('chat message', async (msg, clientOffset, callback) => {
     io.emit('chat message', msg /*result.lastID*/);
+    addMessage('Michi', msg, clientOffset, 'chatroom1');
     callback();
   });
 });
