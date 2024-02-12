@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Socket.IO chat</title>
+    <title>Charlas Descanso in Socket.IO chat</title>
     <style>
       body {
         margin: 0;
@@ -45,7 +45,7 @@
 
       #messages {
         list-style-type: none;
-        margin: 0;
+        margin: 1.5rem 0 0 0;
         padding: 0;
       }
       #messages > li {
@@ -54,28 +54,97 @@
       #messages > li:nth-child(odd) {
         background: #efefef;
       }
+      .room-select {
+        background: rgba(0, 0, 0, 0.15);
+        padding: 0.25rem;
+        margin-bottom: 1rem; /* Add some spacing */
+        display: flex;
+        align-items: center; /* Vertically align label and select */
+        border-radius: 3px;
+        backdrop-filter: blur(10px);
+      }
+
+      .room-select label {
+        color: #fff;
+        margin-right: 0.5rem;
+      }
+
+      .room-select select {
+        background: #333;
+        border: none;
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        color: #fff;
+        outline: none;
+      }
+
+      .username-field {
+        position: fixed;
+        bottom: 2.5rem;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.15);
+        padding: 0.25rem;
+        display: flex;
+        height: 3rem;
+        box-sizing: border-box;
+        backdrop-filter: blur(10px);
+        align-items: center;
+        justify-content: center;
+      }
+
+      .username-field > #username {
+        border: none;
+        padding: 0 1rem;
+        flex-grow: 1;
+        border-radius: 2rem;
+        margin: 0.25rem;
+        line-height: 2rem;
+        background-color: #efefef;
+      }
     </style>
   </head>
   <body>
+    <div class="room-select">
+      <label for="room-dropdown">Chat Room:</label>
+      <select id="room-dropdown">
+        <option value="aceraRoom">Acera</option>
+        <option value="yayaRoom">La Yaya del Poblenou</option>
+        <option value="superRoom">Súper</option>
+      </select>
+    </div>
+
     <ul id="messages"></ul>
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
+    <div class="username-field">
+      <span id="username"></span>
+    </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
       let counter = 0;
+      const form = document.getElementById('form');
+      const input = document.getElementById('input');
+      const messages = document.getElementById('messages');
+      const roomDropdown = document.getElementById('room-dropdown');
+
+      // const username = socket.handshake.query.username;
+      const urlParams = new URLSearchParams(window.location.search);
+      const username = urlParams.get('username');
+      document.getElementById('username').textContent = username;
 
       const socket = io({
         ackTimeout: 10000,
         retries: 3,
         auth: {
           serverOffset: 0
+        },
+        query: {
+          username: username,
+          room: roomDropdown.value
         }
       });
-
-      const form = document.getElementById('form');
-      const input = document.getElementById('input');
-      const messages = document.getElementById('messages');
 
       form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -85,6 +154,14 @@
           input.value = '';
         }
       });
+
+      roomDropdown.addEventListener('change', () => {
+        const newRoom = roomDropdown.value;
+        socket.emit('switchRoom', newRoom);
+        console.log(`The user just joined ${newRoom}`);
+      });
+
+      ////////////////////////////////////////room-implementation
 
       socket.on('chat message', (msg, serverOffset) => {
         const item = document.createElement('li');

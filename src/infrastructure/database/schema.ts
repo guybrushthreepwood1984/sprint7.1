@@ -17,7 +17,7 @@ const messageSchema = new mongoose.Schema({
 });
 
 const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+  name: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   createdAt: { type: Date, immutable: true, default: () => Date.now() },
   messages: [messageSchema]
