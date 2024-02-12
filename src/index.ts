@@ -1,8 +1,10 @@
 import express, { Request, Response } from 'express';
+import session from 'express-session';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
+import { Socket } from 'socket.io';
 import { Socket } from 'node:dgram';
 import cors from 'cors';
 import { isStringObject } from 'node:util/types';
@@ -11,6 +13,7 @@ import {
   newUser,
   addMessage
 } from './infrastructure/database/update_db';
+import { SessionOperation } from 'mongoose';
 
 connectDB();
 
@@ -22,6 +25,18 @@ export const io = new Server(server, {
   connectionStateRecovery: {}
 });
 
+declare module 'express-session' {
+  export interface SessionData {
+    username: string;
+  }
+}
+
+declare module 'express-serve-static-core' {
+  export interface Request {
+    session: session.Session & Partial<session.SessionData>;
+  }
+}
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 console.log(
   `output of: const __dirname = dirname(fileURLToPath(import.meta.url)) is: ${__dirname}`
@@ -32,13 +47,12 @@ app.get('/login', (_req: Request, res: Response) => {
 });
 
 app.post('/login', async (req: Request, res: Response) => {
-  const data = req.body;
-  const username = data.username;
-  const password = data.password;
+  const { username, password } = req.body;
   if (username && password) {
     try {
       await newUser(username, password);
-      res.redirect(`/room?username=${username}`);
+      req.session.username = username;
+      res.json({ success: true });
       console.log({ username: username, password: password });
       res.status(201);
     } catch (error) {
@@ -47,26 +61,14 @@ app.post('/login', async (req: Request, res: Response) => {
     }
   }
 });
-let usernameAppGet = '';
 app.get('/room', (req: Request, res: Response) => {
-  const usernameAppGet = req.query.username;
   res.sendFile(join(__dirname, 'index.html'));
 });
 
-app.post('/room', async (req: Request, res: Response) => {});
-
-// app.post('/', (req: Request, res: Response) => {
-//   res.sendFile(join(__dirname + '/index.html'));
-//   const data = req.body;
-//   res.status(201).send(data);
-// });
-
-// io.use((socket, next) => {
-//   next();
-// });
+// app.post('/room', async (req: Request, res: Response) => {});
 
 io.on('connection', async (socket) => {
-  const username = socket.handshake.query.username;
+  const username = session.username;
   let room = socket.handshake.query.room || 'defaultRoom';
   console.log(`Socket.IO username is ${username}`);
   socket.on('switchRoom', (newRoom) => {

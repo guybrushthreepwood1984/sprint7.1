@@ -70,6 +70,7 @@
       const password = document.getElementById('password');
 
       loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
         const data = {
           username: username.value,
           password: password.value
@@ -82,9 +83,9 @@
           },
           body: JSON.stringify(data)
         })
-          .then(() => {
-            username.value = '';
-            password.value = '';
+          .then((response) => response.json())
+          .then((data) => {
+            window.location.href = `http://localhost:3000/room`;
           })
 
           .catch((error) => {
