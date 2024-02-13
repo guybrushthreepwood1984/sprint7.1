@@ -160,8 +160,6 @@
         console.log(`The user just joined ${newRoom}`);
       });
 
-      ////////////////////////////////////////room-implementation
-
       socket.on('chat message', (msg, serverOffset) => {
         const item = document.createElement('li');
         item.textContent = msg;

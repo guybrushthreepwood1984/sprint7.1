@@ -5,6 +5,7 @@ import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
+import { Socket } from 'socket.io';
 import cors from 'cors';
 import {
   connectDB,
@@ -75,26 +76,31 @@ app.get('/room', (req: Request, res: Response) => {
   res.sendFile(join(__dirname, 'index.html'));
 });
 
-app.post('/room', async (req: Request, res: Response) => {});
-
-io.on('connection', async (socket) => {
-  let room = socket.handshake.query.room || 'defaultRoom';
+io.on('connection', async (socket: Socket) => {
+  let room = 'aceraRoom';
+  socket.leave(room);
+  socket.join(room);
   const username = socket.handshake.session.username;
   console.log(`socket.handshake.session.username ${username}`);
-  socket.on('switchRoom', (newRoom) => {
+  socket.on('switchRoom', (newRoom: string, callback: () => void) => {
     socket.leave(room);
+
     socket.join(newRoom);
     room = newRoom;
     console.log(`User ${username} switched to room ${newRoom}`);
-  });
-  socket.on('chat message', async (msg, clientOffset, callback) => {
-    console.log(
-      `msg in socket.on 'chat message' is ${msg} and room is ${room}`
-    );
-    io.to(room).emit('chat message', msg);
-    addMessage(username, msg, clientOffset, room);
     callback();
   });
+  socket.on(
+    'chat message',
+    async (msg: string, clientOffset: string, callback: () => void) => {
+      console.log(
+        `msg in socket.on 'chat message' is ${msg} and room is ${room}`
+      );
+      io.to(room).emit('chat message', msg);
+      await addMessage(username, msg, clientOffset, room);
+      callback();
+    }
+  );
 
   socket.on('disconnect', () => {
     console.log(`A user has disconnected`);

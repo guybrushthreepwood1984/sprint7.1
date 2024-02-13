@@ -1,18 +1,18 @@
-# Ejemplo básico de TS - Hexagonal
+# Socket-io-chat
 
 ---
 
-En este ejemplo básico hay:
+Real-time-chat-application based on socket.io. After login, you can choose between different rooms to chat, messages are saved to mongodb. Mongodb is accessed via Docker container.
 
-- ESLint
-- Prettier
-- ts-jest
-- nodemon
-- VSCode Debugging
-- Github Actions
-- Pequeño ejemplo de código funcional con import
+Improvements to be made: password validation and hashing
 
-La configuración del debugger apunta a src/index.ts como archivo de inicio del proyecto.
+Project based on this template: https://github.com/jclumbiarres/tsbasico (hexagonal branch)
+
+start in ./src with:
+
+```
+bun run index.ts
+```
 
 Comandos:
 
