@@ -41,7 +41,7 @@ export async function addMessage(
     });
     await user.save();
     console.log(`Message ${newMessage} added successfully`);
-  } catch (e: unknown) {
-    console.log(e.message);
+  } catch (e) {
+    console.log((e as Error).message);
   }
 }

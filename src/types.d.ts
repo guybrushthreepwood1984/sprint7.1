@@ -3,3 +3,9 @@ declare module 'socket.io' {
     session: Express.Session;
   }
 }
+
+declare module 'express-session' {
+  interface SessionData {
+    username: string;
+  }
+}

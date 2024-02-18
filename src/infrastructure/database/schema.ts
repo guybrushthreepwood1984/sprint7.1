@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { Schema } from 'mongoose';
 
-const messageSchema = new mongoose.Schema({
+const messageSchema: Schema = new mongoose.Schema({
   message: {
     type: String,
     required: true

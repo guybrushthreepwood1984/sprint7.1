@@ -4,6 +4,7 @@ import sharedsession from 'express-socket.io-session';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import crypto from 'crypto';
 import { Server } from 'socket.io';
 import { Socket } from 'socket.io';
 import cors from 'cors';
@@ -14,18 +15,6 @@ import {
 } from './infrastructure/database/update_db';
 
 connectDB();
-
-// declare module 'socket.io' {
-//   export interface Socket {}
-// }
-// import { Socket } from 'socket.io';
-// import { isStringObject } from 'node:util/types';
-
-// app.post('/', (req: Request, res: Response) => {
-//   res.sendFile(join(__dirname + '/index.html'));
-//   const data = req.body;
-//   res.status(201).send(data);
-// });
 
 const app = express();
 app.use(express.json());
@@ -52,14 +41,21 @@ io.use(
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+function hashPassword(password: string): string {
+  const secretKey = 'monkeyIsland';
+  const saltedPassword = secretKey + password;
+  const hash = crypto.createHash('sha256').update(saltedPassword).digest('hex');
+  return hash;
+}
+
 app.post('/login', async (req: Request, res: Response) => {
   const { username, password } = req.body;
+  const hashedPassword: string = hashPassword(password);
   req.session.username = username;
   if (username && password) {
     try {
-      await newUser(username, password);
+      await newUser(username, hashedPassword);
       res.json({ success: true });
-      console.log({ username: username, password: password });
       res.status(201);
     } catch (error) {
       console.log(error);

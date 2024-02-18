@@ -12,17 +12,10 @@ start in ./src with:
 
 ```
 bun run index.ts
+
 ```
 
 Comandos:
-
-Testing:
-
-```sh
-npm run test
-```
-
-Ejecuta los tests ignorando los que existan en dist/
 
 Prettier format:
 
@@ -47,14 +40,6 @@ npm run dev:run
 ```
 
 Ejecuta el proyecto sin watcher
-
-Build:
-
-```sh
-npm run build
-```
-
-Transpila el proyecto en dist/
 
 ---
 
